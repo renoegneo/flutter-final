@@ -1,6 +1,6 @@
 // lib/widgets/delete_event_dialog.dart
 //
-// Простой диалог подтверждения удаления.
+// диалог подтверждения удаления события
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,6 +1,5 @@
 // lib/screens/home_screen.dart
-//
-// Главный экран приложения — список событий на выбранный день.
+// главный экран с расписанием на день
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +18,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // context.watch следит за изменениями и перерисовывает экран
     final scheduleProvider = context.watch<ScheduleProvider>();
     final settings = context.watch<SettingsProvider>();
     final strings = AppStrings(settings.language);
@@ -27,7 +25,6 @@ class HomeScreen extends StatelessWidget {
     final events = scheduleProvider.eventsForSelectedDay;
     final selectedDate = scheduleProvider.selectedDate;
 
-    // Форматируем дату для заголовка: "Monday, February 2"
     final dateFormatter = DateFormat(
       settings.language == 'ru' ? 'EEEE, d MMMM' : 'EEEE, MMMM d',
       settings.language == 'ru' ? 'ru' : 'en',
@@ -35,7 +32,6 @@ class HomeScreen extends StatelessWidget {
     final dateTitle = dateFormatter.format(selectedDate);
 
     return Scaffold(
-      // Боковое меню
       drawer: const BurgerMenu(),
 
       appBar: AppBar(
@@ -49,7 +45,6 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          // Кнопка "сегодня" — если выбран не сегодняшний день
           if (!_isToday(selectedDate))
             TextButton(
               onPressed: scheduleProvider.goToToday,
@@ -59,10 +54,8 @@ class HomeScreen extends StatelessWidget {
       ),
 
       body: scheduleProvider.isLoading
-          // Пока загружается — крутилка
           ? const Center(child: CircularProgressIndicator())
           : events.isEmpty
-              // Нет событий — показываем заглушку
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -90,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
 
-      // Кнопка добавления события (FAB = Floating Action Button)
+      // кнопка добавления события
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddEvent(context, selectedDate),
         child: const Icon(Icons.add),
@@ -98,21 +91,17 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Открыть диалог добавления события
   Future<void> _showAddEvent(BuildContext context, DateTime date) async {
-    // showDialog возвращает то, что вернул Navigator.pop внутри диалога
     final Event? newEvent = await showDialog<Event>(
       context: context,
       builder: (_) => AddEventDialog(initialDate: date),
     );
 
-    // Если пользователь подтвердил (не нажал "Отмена")
     if (newEvent != null && context.mounted) {
       await context.read<ScheduleProvider>().addEvent(newEvent);
     }
   }
 
-  // Показать диалог подтверждения удаления
   Future<void> _confirmDelete(
     BuildContext context,
     String eventId,
@@ -129,7 +118,6 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  // Проверка: является ли дата сегодняшним днём
   bool _isToday(DateTime date) {
     final now = DateTime.now();
     return date.year == now.year &&

@@ -1,7 +1,5 @@
 // lib/screens/upload_screen.dart
-//
-// Экран загрузки файла с расписанием.
-// Пользователь выбирает файл → видит превью → нажимает Import.
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

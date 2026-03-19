@@ -1,7 +1,5 @@
 // lib/widgets/save_dialog.dart
-//
-// Диалог сохранения расписания в файл.
-// Показывает: подтверждение → успех с кнопками "Закрыть" и "Открыть файл".
+// диалог сохраннения расписания в CSV-файл
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -19,7 +17,6 @@ class SaveDialog extends StatefulWidget {
 }
 
 class _SaveDialogState extends State<SaveDialog> {
-  // Три возможных состояния диалога
   bool _isSaving = false;
   bool _isSaved = false;
   String? _savedPath;
@@ -31,7 +28,6 @@ class _SaveDialogState extends State<SaveDialog> {
       final scheduleProvider = context.read<ScheduleProvider>();
       final events = scheduleProvider.eventsForSelectedDay;
 
-      // Собираем CSV-содержимое
       final buffer = StringBuffer();
       buffer.writeln('Time,Event,Date,Recurring');
 
@@ -43,7 +39,6 @@ class _SaveDialogState extends State<SaveDialog> {
         buffer.writeln('$time,${event.title},$date,${event.isRecurring}');
       }
 
-      // Получаем папку загрузок (или Documents на iOS)
       final Directory dir;
       if (Platform.isAndroid) {
         dir = Directory('/storage/emulated/0/Download');
@@ -76,7 +71,6 @@ class _SaveDialogState extends State<SaveDialog> {
     final settings = context.watch<SettingsProvider>();
     final strings = AppStrings(settings.language);
 
-    // Экран успеха
     if (_isSaved) {
       return AlertDialog(
         content: Column(
@@ -98,7 +92,7 @@ class _SaveDialogState extends State<SaveDialog> {
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // Открыть файловый менеджер (упрощённо — просто показываем путь)
+              // Открыть файловый менеджер
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(_savedPath ?? '')),
               );
@@ -119,7 +113,7 @@ class _SaveDialogState extends State<SaveDialog> {
           child: Text(strings.cancel),
         ),
         FilledButton(
-          onPressed: _isSaving ? null : _save, // null = кнопка неактивна
+          onPressed: _isSaving ? null : _save,
           child: _isSaving
               ? const SizedBox(
                   width: 16,

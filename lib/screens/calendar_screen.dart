@@ -1,7 +1,5 @@
 // lib/screens/calendar_screen.dart
-//
-// Экран с полным календарём.
-// Пользователь может выбрать любой день — и главный экран обновится.
+// экран с календарём для выбора дня
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +15,7 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  // Месяц, который сейчас отображается
+  // текущий месяц
   late DateTime _displayedMonth;
 
   @override

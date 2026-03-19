@@ -1,7 +1,5 @@
 // lib/providers/settings_provider.dart
-//
-// Провайдер настроек. Работает так же как ScheduleProvider,
-// но отвечает за тему, язык, формат времени и т.д.
+//  
 
 import 'package:flutter/material.dart';
 import '../models/settings.dart';
@@ -14,12 +12,12 @@ class SettingsProvider extends ChangeNotifier {
 
   AppSettings get settings => _settings;
 
-  // Удобные геттеры для часто используемых настроек
+  // геттеры для часто используемых настроек
   bool get isDarkMode => _settings.isDarkMode;
   String get language => _settings.language;
   bool get use24HourFormat => _settings.use24HourFormat;
 
-  // Загрузить настройки при старте
+  // загрузить настройки при старте
   Future<void> loadSettings() async {
     _settings = await _storage.loadSettings();
     notifyListeners();

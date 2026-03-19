@@ -1,8 +1,5 @@
 // lib/widgets/add_event_dialog.dart
-//
-// Диалог добавления нового события.
-// StatefulWidget — виджет, у которого есть своё изменяемое состояние
-// (в отличие от StatelessWidget, который всегда одинаков).
+// диалог добавления нового события
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +17,6 @@ class AddEventDialog extends StatefulWidget {
 }
 
 class _AddEventDialogState extends State<AddEventDialog> {
-  // TextEditingController — управляет текстовым полем ввода
   final _titleController = TextEditingController();
 
   TimeOfDay _selectedTime = TimeOfDay.now();
@@ -29,7 +25,6 @@ class _AddEventDialogState extends State<AddEventDialog> {
   @override
   void initState() {
     super.initState();
-    // Инициализируем время текущим
     _selectedTime = TimeOfDay(
       hour: widget.initialDate.hour,
       minute: widget.initialDate.minute,
@@ -38,12 +33,10 @@ class _AddEventDialogState extends State<AddEventDialog> {
 
   @override
   void dispose() {
-    // Важно освобождать контроллеры! Иначе утечка памяти.
     _titleController.dispose();
     super.dispose();
   }
 
-  // Открыть системный выбор времени
   Future<void> _pickTime() async {
     final picked = await showTimePicker(
       context: context,
@@ -56,9 +49,8 @@ class _AddEventDialogState extends State<AddEventDialog> {
 
   void _submit() {
     final title = _titleController.text.trim();
-    if (title.isEmpty) return; // не создаём пустые события
+    if (title.isEmpty) return; // нельзя добавить пустое событие
 
-    // Собираем полную дату из выбранного дня + выбранного времени
     final dt = DateTime(
       widget.initialDate.year,
       widget.initialDate.month,

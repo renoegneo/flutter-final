@@ -1,8 +1,5 @@
 // lib/widgets/event_tile.dart
-//
-// Виджет одной строки события в списке расписания.
-// Виджет (Widget) — это любой элемент интерфейса во Flutter.
-
+// виджет для отображения одного события в списке
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/event.dart';
@@ -10,7 +7,7 @@ import '../providers/settings_provider.dart';
 
 class EventTile extends StatelessWidget {
   final Event event;
-  final VoidCallback onDelete; // VoidCallback = функция без аргументов и возврата
+  final VoidCallback onDelete; 
 
   const EventTile({
     super.key,
@@ -31,7 +28,6 @@ class EventTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
-        // Время слева — серым цветом
         leading: Text(
           timeStr,
           style: TextStyle(
@@ -40,7 +36,6 @@ class EventTile extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        // Название события
         title: Text(
           event.title,
           style: const TextStyle(
@@ -48,7 +43,6 @@ class EventTile extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        // Иконка повтора (если событие повторяется)
         subtitle: event.isRecurring
             ? Row(
                 children: [
@@ -61,9 +55,7 @@ class EventTile extends StatelessWidget {
                 ],
               )
             : null,
-        // Кнопка удаления — появляется при долгом нажатии
         onLongPress: onDelete,
-        // Маленькая кнопка удаления справа
         trailing: IconButton(
           icon: Icon(Icons.close, size: 18, color: Colors.grey[400]),
           onPressed: onDelete,

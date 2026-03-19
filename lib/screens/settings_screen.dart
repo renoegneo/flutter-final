@@ -1,7 +1,5 @@
 // lib/screens/settings_screen.dart
-//
-// Экран настроек приложения.
-// Здесь пользователь управляет темой, языком, форматом времени и т.д.
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +11,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // context.watch — подписываемся на изменения настроек.
-    // Как только настройка меняется — экран перерисовывается.
+    // Получаем провайдер настроек и строки для текущего языка
     final settings = context.watch<SettingsProvider>();
     final strings = AppStrings(settings.language);
 
@@ -23,11 +20,8 @@ class SettingsScreen extends StatelessWidget {
         title: Text(strings.settings),
       ),
       body: ListView(
-        // ListView удобнее Column, когда элементов много —
-        // он умеет скроллиться если не влезают на экран.
         children: [
 
-          // --- Уведомления ---
           SwitchListTile(
             secondary: const Icon(Icons.notifications_outlined),
             title: Text(strings.notifications),
@@ -37,7 +31,6 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(height: 1),
 
-          // --- Тёмная тема ---
           SwitchListTile(
             secondary: const Icon(Icons.dark_mode_outlined),
             title: Text(strings.darkMode),
@@ -47,12 +40,9 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(height: 1),
 
-          // --- Формат времени ---
-          // ListTile без Switch — нажатие открывает выбор
           ListTile(
             leading: const Icon(Icons.access_time_outlined),
             title: Text(strings.timeFormat),
-            // trailing — элемент справа в строке
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -68,7 +58,6 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(height: 1),
 
-          // --- Язык ---
           ListTile(
             leading: const Icon(Icons.language_outlined),
             title: Text(strings.languageLabel),
@@ -87,7 +76,6 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(height: 1),
 
-          // --- Напоминание ---
           ListTile(
             leading: const Icon(Icons.alarm_outlined),
             title: Text(strings.reminder),
@@ -106,7 +94,6 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(height: 1),
 
-          // --- Начало недели ---
           ListTile(
             leading: const Icon(Icons.calendar_today_outlined),
             title: Text(strings.weekStart),
@@ -131,13 +118,11 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // Диалог выбора формата времени
   void _showTimeFormatPicker(
     BuildContext context,
     SettingsProvider settings,
     AppStrings strings,
   ) {
-    // showModalBottomSheet — шторка снизу экрана
     showModalBottomSheet(
       context: context,
       builder: (_) => Column(

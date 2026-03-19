@@ -1,15 +1,12 @@
 // lib/services/file_import_service.dart
-//
-// Сервис для чтения расписаний из файлов разных форматов.
-// Парсинг (parsing) — это разбор файла и извлечение данных из него.
+// Этот сервис отвечает за импорт событий из файлов разных форматов: CSV, Excel и ICS.
 
-import 'dart:io'; // работа с файловой системой
+import 'dart:io'; 
 import 'package:csv/csv.dart';
 import 'package:excel/excel.dart';
 import '../models/event.dart';
 
 class FileImportService {
-  // Главный метод — определяет формат файла и вызывает нужный парсер
   Future<List<Event>> importFile(String filePath) async {
     final extension = filePath.split('.').last.toLowerCase();
 
@@ -26,8 +23,6 @@ class FileImportService {
     }
   }
 
-  // --- CSV парсер ---
-  // CSV (Comma-Separated Values) — файл где значения разделены запятыми
   Future<List<Event>> _parseCsv(String filePath) async {
     final file = File(filePath);
     final content = await file.readAsString();
@@ -36,10 +31,9 @@ class FileImportService {
 
     final events = <Event>[];
 
-    // Пропускаем первую строку — это обычно заголовки ("Time", "Event" и т.д.)
     for (int i = 1; i < rows.length; i++) {
       final row = rows[i];
-      if (row.length < 2) continue; // пропускаем неполные строки
+      if (row.length < 2) continue;
 
       final event = _parseRowToEvent(
         timeStr: row[0].toString(),
@@ -53,27 +47,23 @@ class FileImportService {
     return events;
   }
 
-  // --- Excel парсер ---
   Future<List<Event>> _parseExcel(String filePath) async {
     final file = File(filePath);
-    final bytes = file.readAsBytesSync(); // excel ^3 принимает Uint8List напрямую
+    final bytes = file.readAsBytesSync();
     final excel = Excel.decodeBytes(bytes);
 
     final events = <Event>[];
 
-    // Берём первый лист (sheet) из файла
     final sheetName = excel.tables.keys.first;
     final sheet = excel.tables[sheetName];
     if (sheet == null) return events;
 
     final rows = sheet.rows;
 
-    // Пропускаем заголовок (первую строку)
     for (int i = 1; i < rows.length; i++) {
       final row = rows[i];
       if (row.isEmpty) continue;
 
-      // getCellValue — получаем текст из ячейки, защищаясь от null
       final timeStr = row[0]?.value?.toString() ?? '';
       final title = row.length > 1 ? (row[1]?.value?.toString() ?? '') : '';
       final dateStr = row.length > 2 ? row[2]?.value?.toString() : null;
@@ -91,9 +81,6 @@ class FileImportService {
 
     return events;
   }
-
-  // --- ICS парсер ---
-  // ICS — формат iCalendar, используется в Google Calendar, Outlook и т.д.
   Future<List<Event>> _parseIcs(String filePath) async {
     final file = File(filePath);
     final content = await file.readAsString();

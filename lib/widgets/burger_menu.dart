@@ -1,7 +1,5 @@
 // lib/widgets/burger_menu.dart
-//
-// Боковое меню (drawer) — открывается свайпом справа или кнопкой ≡.
-// Drawer — стандартный виджет Flutter для бокового меню.
+// бургер меню
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
