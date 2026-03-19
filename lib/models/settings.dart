@@ -1,6 +1,6 @@
 // lib/models/settings.dart
 //
-// Модель настроек приложения.
+// Модель настроек приложения
 
 class AppSettings {
   final bool isDarkMode;

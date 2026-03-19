@@ -1,12 +1,15 @@
 // lib/services/file_import_service.dart
-// Этот сервис отвечает за импорт событий из файлов разных форматов: CSV, Excel и ICS.
+//
+// Сервис для чтения расписаний из файлов разных форматов.
+// Парсинг (parsing) — это разбор файла и извлечение данных из него.
 
-import 'dart:io'; 
+import 'dart:io'; // работа с файловой системой
 import 'package:csv/csv.dart';
 import 'package:excel/excel.dart';
 import '../models/event.dart';
 
 class FileImportService {
+  // Главный метод — определяет формат файла и вызывает нужный парсер
   Future<List<Event>> importFile(String filePath) async {
     final extension = filePath.split('.').last.toLowerCase();
 
@@ -23,17 +26,24 @@ class FileImportService {
     }
   }
 
+  // --- CSV парсер ---
+  // CSV (Comma-Separated Values) — файл где значения разделены запятыми
   Future<List<Event>> _parseCsv(String filePath) async {
     final file = File(filePath);
     final content = await file.readAsString();
 
-    final rows = const CsvToListConverter().convert(content);
+    // eol: указываем символ конца строки
+    // Без нормализации на Windows-файлах последнее поле содержало бы лишний \r
+    final rows = const CsvToListConverter(eol: '\n').convert(
+      content.replaceAll('\r\n', '\n'), // нормализуем переносы строк
+    );
 
     final events = <Event>[];
 
+    // Пропускаем первую строку — это обычно заголовки ("Time", "Event" и т.д.)
     for (int i = 1; i < rows.length; i++) {
       final row = rows[i];
-      if (row.length < 2) continue;
+      if (row.length < 2) continue; // пропускаем неполные строки
 
       final event = _parseRowToEvent(
         timeStr: row[0].toString(),
@@ -47,23 +57,27 @@ class FileImportService {
     return events;
   }
 
+  // --- Excel парсер ---
   Future<List<Event>> _parseExcel(String filePath) async {
     final file = File(filePath);
-    final bytes = file.readAsBytesSync();
+    final bytes = file.readAsBytesSync(); // excel ^3 принимает Uint8List напрямую
     final excel = Excel.decodeBytes(bytes);
 
     final events = <Event>[];
 
+    // Берём первый лист (sheet) из файла
     final sheetName = excel.tables.keys.first;
     final sheet = excel.tables[sheetName];
     if (sheet == null) return events;
 
     final rows = sheet.rows;
 
+    // Пропускаем заголовок (первую строку)
     for (int i = 1; i < rows.length; i++) {
       final row = rows[i];
       if (row.isEmpty) continue;
 
+      // getCellValue — получаем текст из ячейки, защищаясь от null
       final timeStr = row[0]?.value?.toString() ?? '';
       final title = row.length > 1 ? (row[1]?.value?.toString() ?? '') : '';
       final dateStr = row.length > 2 ? row[2]?.value?.toString() : null;
@@ -81,6 +95,9 @@ class FileImportService {
 
     return events;
   }
+
+  // --- ICS парсер ---
+  // ICS — формат iCalendar, используется в Google Calendar, Outlook и т.д.
   Future<List<Event>> _parseIcs(String filePath) async {
     final file = File(filePath);
     final content = await file.readAsString();
@@ -154,8 +171,9 @@ class FileImportService {
     }
 
     return Event(
-      // Уникальный ID: миллисекунды + случайный суффикс
-      id: '${DateTime.now().millisecondsSinceEpoch}_${title.hashCode}',
+      // ID: время + хэш названия + хэш самого времени
+      // Так даже два события в одну минуту получат разные ID
+      id: '${DateTime.now().millisecondsSinceEpoch}_${title.hashCode}_${dateTime.hashCode}',
       title: title,
       dateTime: dateTime,
     );
@@ -190,20 +208,20 @@ class FileImportService {
   }
 
   // Парсит дату из формата ICS: "20240212T090000Z"
+  // Формат: YYYYMMDD'T'HHMMSS — буква T стоит на позиции 8
   DateTime? _parseIcsDate(String value) {
     try {
-      // Убираем 'Z' (означает UTC — всемирное время)
       final clean = value.replaceAll('Z', '');
       if (clean.length >= 15) {
         return DateTime(
-          int.parse(clean.substring(0, 4)),   // год
-          int.parse(clean.substring(4, 6)),   // месяц
-          int.parse(clean.substring(6, 8)),   // день
-          int.parse(clean.substring(9, 11)),  // час
-          int.parse(clean.substring(11, 13)), // минута
+          int.parse(clean.substring(0, 4)),   // год: 2024
+          int.parse(clean.substring(4, 6)),   // месяц: 02
+          int.parse(clean.substring(6, 8)),   // день: 12
+          int.parse(clean.substring(9, 11)),  // час: 09  (пропускаем 'T' на позиции 8)
+          int.parse(clean.substring(11, 13)), // минута: 00
         );
       } else if (clean.length == 8) {
-        // Только дата без времени
+        // Только дата без времени: "20240212"
         return DateTime(
           int.parse(clean.substring(0, 4)),
           int.parse(clean.substring(4, 6)),
