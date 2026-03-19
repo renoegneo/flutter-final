@@ -1,12 +1,9 @@
 // lib/theme.dart
-//
-// Тема приложения — цвета, шрифты, стили компонентов.
-// Здесь задаётся визуальный стиль всего приложения сразу.
+// темы приложения
 
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Основные цвета (из Figma — тёмно-серый фон, синий акцент)
   static const Color _primaryColor = Color(0xFF4A90D9);   // синий акцент
   static const Color _darkBackground = Color(0xFF1C1C1E); // тёмный фон
   static const Color _darkSurface = Color(0xFF2C2C2E);    // карточки в тёмной теме

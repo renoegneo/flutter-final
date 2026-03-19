@@ -1,13 +1,10 @@
-// lib/models/event.dart
-//
-// Модель одного события в расписании.
-// "Модель" — это просто класс, который описывает структуру данных.
+// модели событий
 
 class Event {
-  final String id;         // уникальный идентификатор (чтобы различать события)
-  final String title;      // название события
+  final String id;         // айди
+  final String title;      // название ивента
   final DateTime dateTime; // дата и время начала
-  final bool isRecurring;  // повторяется ли каждую неделю
+  final bool isRecurring;  // повторение каждую неделю
   final String? note;      // необязательная заметка
 
   Event({
@@ -19,7 +16,6 @@ class Event {
   });
 
   // Конвертация в Map для сохранения в SharedPreferences
-  // Map — это структура "ключ: значение", как словарь
   Map<String, dynamic> toMap() {
     return {
       'id': id,

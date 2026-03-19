@@ -1,8 +1,4 @@
-// lib/l10n/app_strings.dart
-//
-// Строки интерфейса на двух языках.
-// l10n — сокращение от "localization" (локализация = перевод на разные языки)
-
+// локализация строк приложения
 class AppStrings {
   final String language;
 
@@ -10,7 +6,6 @@ class AppStrings {
 
   bool get _isRu => language == 'ru';
 
-  // --- Общие ---
   String get appName => 'Schedule';
   String get cancel => _isRu ? 'Отмена' : 'Cancel';
   String get save => _isRu ? 'Сохранить' : 'Save';
@@ -21,18 +16,15 @@ class AppStrings {
   String get no => _isRu ? 'Нет' : 'No';
   String get ok => 'OK';
 
-  // --- Главный экран ---
   String get today => _isRu ? 'Сегодня' : 'Today';
   String get noEvents => _isRu ? 'Нет событий' : 'No events';
   String get addEvent => _isRu ? 'Добавить событие' : 'Add Event';
 
-  // --- Меню ---
   String get upload => _isRu ? 'Загрузить' : 'Upload';
   String get saveSchedule => _isRu ? 'Сохранить расписание' : 'Save Schedule';
   String get calendar => _isRu ? 'Календарь' : 'Calendar';
   String get settings => _isRu ? 'Настройки' : 'Settings';
 
-  // --- Диалог добавления ---
   String get time => _isRu ? 'Время' : 'Time';
   String get eventName => _isRu ? 'Название события' : 'Event name';
   String get enterEventName =>
@@ -40,13 +32,11 @@ class AppStrings {
   String get repeatsWeekly =>
       _isRu ? 'Повторять каждую неделю' : 'Repeat weekly';
 
-  // --- Диалог удаления ---
   String get deleteEventTitle =>
       _isRu ? 'Удалить событие?' : 'Delete this event?';
   String get deleteEventMessage =>
       _isRu ? 'Это действие нельзя отменить.' : 'This action cannot be undone.';
 
-  // --- Загрузка файла ---
   String get uploadSchedule =>
       _isRu ? 'Загрузить расписание' : 'Upload Schedule';
   String get clickToSelect =>
@@ -57,7 +47,6 @@ class AppStrings {
   String get importSuccess =>
       _isRu ? 'Расписание импортировано!' : 'Schedule imported!';
 
-  // --- Сохранение ---
   String get saveTitle =>
       _isRu ? 'Сохранить расписание?' : 'Save this schedule?';
   String get saveMessage =>
@@ -66,7 +55,6 @@ class AppStrings {
       _isRu ? 'Расписание успешно сохранено!' : 'Schedule was successfully saved to downloads folder!';
   String get goToFile => _isRu ? 'Открыть файл' : 'Go to file';
 
-  // --- Настройки ---
   String get notifications => _isRu ? 'Уведомления' : 'Notifications';
   String get darkMode => _isRu ? 'Тёмная тема' : 'Dark Mode';
   String get timeFormat => _isRu ? 'Формат времени' : 'Time Format';
@@ -80,7 +68,6 @@ class AppStrings {
   String minutesBefore(int n) =>
       _isRu ? 'За $n мин' : '$n min before';
 
-  // --- Дни недели ---
   List<String> get weekDaysShort =>
       _isRu ? ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
              : ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];

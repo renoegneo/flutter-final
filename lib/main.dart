@@ -41,9 +41,6 @@ class _AppInitializerState extends State<AppInitializer> {
   void initState() {
     super.initState();
 
-    // addPostFrameCallback — запускает код ПОСЛЕ того как первый кадр
-    // полностью отрисован. Это безопасное место для вызова notifyListeners().
-    // Без этого провайдер пытается обновить дерево пока оно ещё строится — крэш.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<SettingsProvider>().loadSettings();
