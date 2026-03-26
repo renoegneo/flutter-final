@@ -1,6 +1,5 @@
-// lib/providers/schedule_provider.dart
-
 import 'package:flutter/foundation.dart';
+
 import '../models/event.dart';
 import '../services/storage_service.dart';
 
@@ -11,9 +10,7 @@ class ScheduleProvider extends ChangeNotifier {
   DateTime _selectedDate = DateTime.now();
   bool _isLoading = false;
 
-  // Режим выделения — активируется долгим нажатием
   bool _isSelectionMode = false;
-  // Set удобен для выделения: проверка "есть ли элемент" работает мгновенно
   final Set<String> _selectedIds = {};
 
   List<Event> get allEvents => _allEvents;
@@ -60,7 +57,6 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Редактировать событие — находим по ID и заменяем
   Future<void> updateEvent(Event updatedEvent) async {
     final index = _allEvents.indexWhere((e) => e.id == updatedEvent.id);
     if (index == -1) return;
@@ -69,7 +65,6 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Удалить все выделенные события за один раз
   Future<void> deleteSelected() async {
     _allEvents.removeWhere((e) => _selectedIds.contains(e.id));
     await _storage.saveEvents(_allEvents);
@@ -77,7 +72,13 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- Режим выделения ---
+  Future<void> replaceAllEvents(List<Event> events) async {
+    _allEvents = List<Event>.from(events)
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    await _storage.saveEvents(_allEvents);
+    _exitSelectionMode();
+    notifyListeners();
+  }
 
   void enterSelectionMode(String firstId) {
     _isSelectionMode = true;
@@ -117,15 +118,11 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Импорт: удаляем события тех дней что в файле, добавляем новые.
-  // targetDate — выбранный день (события без даты импортируются именно на него)
   Future<void> importEvents(List<Event> events, DateTime targetDate) async {
-    // Переносим события без явной даты на targetDate
     final eventsToAdd = events.map((e) {
       final isToday = _isSameDay(e.dateTime, DateTime.now());
-      if (!isToday) return e; // у события есть своя дата — оставляем
+      if (!isToday) return e;
 
-      // Переносим только время на targetDate
       return e.copyWith(
         dateTime: DateTime(
           targetDate.year,
@@ -137,14 +134,13 @@ class ScheduleProvider extends ChangeNotifier {
       );
     }).toList();
 
-    // Собираем даты всех импортируемых событий
     final importDates = eventsToAdd
         .map((e) => DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))
         .toSet();
 
-    // Удаляем старые события для этих дат
     _allEvents.removeWhere((e) {
-      final eventDay = DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day);
+      final eventDay =
+          DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day);
       return importDates.contains(eventDay);
     });
 
@@ -164,9 +160,9 @@ class ScheduleProvider extends ChangeNotifier {
   }
 
   Set<DateTime> get daysWithEvents {
-    return _allEvents.map((e) {
-      return DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day);
-    }).toSet();
+    return _allEvents
+        .map((e) => DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))
+        .toSet();
   }
 
   bool _isSameDay(DateTime a, DateTime b) =>

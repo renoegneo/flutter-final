@@ -1,5 +1,5 @@
 name: schedule_app
-description: schedule 
+description: schedule
 
 publish_to: 'none'
 version: 1.0.0+1
@@ -16,6 +16,9 @@ dependencies:
 
   # Local storage
   shared_preferences: ^2.2.2
+
+  # Networking
+  http: ^1.2.2
 
   # File picker
   file_picker: ^6.1.1

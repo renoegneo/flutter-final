@@ -1,13 +1,12 @@
-// lib/widgets/burger_menu.dart
-// бургер меню
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/settings_provider.dart';
+
 import '../l10n/app_strings.dart';
-import '../screens/upload_screen.dart';
-import '../screens/settings_screen.dart';
+import '../providers/settings_provider.dart';
 import '../screens/calendar_screen.dart';
+import '../screens/cloud_screen.dart';
+import '../screens/settings_screen.dart';
+import '../screens/upload_screen.dart';
 import 'save_dialog.dart';
 
 class BurgerMenu extends StatelessWidget {
@@ -23,7 +22,6 @@ class BurgerMenu extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Заголовок меню
             Padding(
               padding: const EdgeInsets.all(20),
               child: Text(
@@ -34,21 +32,27 @@ class BurgerMenu extends StatelessWidget {
                 ),
               ),
             ),
-
             const Divider(),
-
-            // Пункты меню
+            _MenuItem(
+              icon: Icons.cloud_outlined,
+              label: strings.cloudAccount,
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const CloudScreen()),
+                );
+              },
+            ),
             _MenuItem(
               icon: Icons.upload_file,
               label: strings.upload,
               onTap: () {
-                Navigator.of(context).pop(); // закрыть меню
+                Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const UploadScreen()),
                 );
               },
             ),
-
             _MenuItem(
               icon: Icons.save_alt,
               label: strings.saveSchedule,
@@ -60,7 +64,6 @@ class BurgerMenu extends StatelessWidget {
                 );
               },
             ),
-
             _MenuItem(
               icon: Icons.calendar_month,
               label: strings.calendar,
@@ -71,11 +74,8 @@ class BurgerMenu extends StatelessWidget {
                 );
               },
             ),
-
-            const Spacer(), // растягивает пустое пространство, прижимая Settings вниз
-
+            const Spacer(),
             const Divider(),
-
             _MenuItem(
               icon: Icons.settings,
               label: strings.settings,
@@ -93,7 +93,6 @@ class BurgerMenu extends StatelessWidget {
   }
 }
 
-// Вспомогательный виджет для пункта меню (избегаем дублирования кода)
 class _MenuItem extends StatelessWidget {
   final IconData icon;
   final String label;

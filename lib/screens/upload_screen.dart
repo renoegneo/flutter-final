@@ -1,16 +1,12 @@
-// lib/screens/upload_screen.dart
-//
-// Экран загрузки файла с расписанием.
-// Пользователь выбирает файл → видит превью → нажимает Import.
-
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
+
+import '../l10n/app_strings.dart';
+import '../models/event.dart';
 import '../providers/schedule_provider.dart';
 import '../providers/settings_provider.dart';
-import '../models/event.dart';
 import '../services/file_import_service.dart';
-import '../l10n/app_strings.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({super.key});
@@ -23,12 +19,10 @@ class _UploadScreenState extends State<UploadScreen> {
   final _importService = FileImportService();
 
   String? _selectedFileName;
-  String? _selectedFilePath;
-  List<Event>? _previewEvents; // события для предпросмотра
+  List<Event>? _previewEvents;
   bool _isLoading = false;
   String? _errorMessage;
 
-  // Открыть системный диалог выбора файла
   Future<void> _pickFile() async {
     setState(() {
       _errorMessage = null;
@@ -36,12 +30,10 @@ class _UploadScreenState extends State<UploadScreen> {
     });
 
     final result = await FilePicker.platform.pickFiles(
-      // Разрешённые расширения файлов
       allowedExtensions: ['csv', 'xlsx', 'xls', 'ics'],
       type: FileType.custom,
     );
 
-    // Пользователь отменил выбор
     if (result == null || result.files.isEmpty) return;
 
     final file = result.files.first;
@@ -49,7 +41,6 @@ class _UploadScreenState extends State<UploadScreen> {
 
     setState(() {
       _selectedFileName = file.name;
-      _selectedFilePath = file.path;
       _isLoading = true;
     });
 
@@ -67,12 +58,10 @@ class _UploadScreenState extends State<UploadScreen> {
     }
   }
 
-  // Импортировать события в приложение
   Future<void> _import() async {
     if (_previewEvents == null || _previewEvents!.isEmpty) return;
 
     final scheduleProvider = context.read<ScheduleProvider>();
-    // Передаём выбранный день — события без даты импортируются именно на него
     await scheduleProvider.importEvents(
       _previewEvents!,
       scheduleProvider.selectedDate,
@@ -103,7 +92,6 @@ class _UploadScreenState extends State<UploadScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Зона выбора файла — нажимаемый контейнер
             GestureDetector(
               onTap: _pickFile,
               child: Container(
@@ -145,14 +133,8 @@ class _UploadScreenState extends State<UploadScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 24),
-
-            // Состояние загрузки
-            if (_isLoading)
-              const Center(child: CircularProgressIndicator()),
-
-            // Сообщение об ошибке
+            if (_isLoading) const Center(child: CircularProgressIndicator()),
             if (_errorMessage != null)
               Container(
                 padding: const EdgeInsets.all(12),
@@ -165,8 +147,6 @@ class _UploadScreenState extends State<UploadScreen> {
                   style: const TextStyle(color: Colors.red),
                 ),
               ),
-
-            // Предпросмотр событий
             if (_previewEvents != null) ...[
               Text(
                 strings.preview,
@@ -187,15 +167,12 @@ class _UploadScreenState extends State<UploadScreen> {
                           return ListTile(
                             leading: Text(timeStr),
                             title: Text(event.title),
-                            dense: true, // компактный вид
+                            dense: true,
                           );
                         },
                       ),
               ),
-
               const SizedBox(height: 16),
-
-              // Кнопки Cancel и Import
               Row(
                 children: [
                   Expanded(
@@ -214,8 +191,6 @@ class _UploadScreenState extends State<UploadScreen> {
                 ],
               ),
             ],
-
-            // Если файл не выбран — только Cancel
             if (_previewEvents == null && !_isLoading) ...[
               const Spacer(),
               OutlinedButton(

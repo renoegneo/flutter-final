@@ -1,8 +1,3 @@
-// lib/l10n/app_strings.dart
-//
-// Строки интерфейса на двух языках.
-// l10n — сокращение от "localization" (локализация = перевод на разные языки)
-
 class AppStrings {
   final String language;
 
@@ -10,7 +5,6 @@ class AppStrings {
 
   bool get _isRu => language == 'ru';
 
-  // --- Общие ---
   String get appName => 'Schedule';
   String get cancel => _isRu ? 'Отмена' : 'Cancel';
   String get save => _isRu ? 'Сохранить' : 'Save';
@@ -21,18 +15,16 @@ class AppStrings {
   String get no => _isRu ? 'Нет' : 'No';
   String get ok => 'OK';
 
-  // --- Главный экран ---
   String get today => _isRu ? 'Сегодня' : 'Today';
   String get noEvents => _isRu ? 'Нет событий' : 'No events';
   String get addEvent => _isRu ? 'Добавить событие' : 'Add Event';
 
-  // --- Меню ---
   String get upload => _isRu ? 'Загрузить' : 'Upload';
   String get saveSchedule => _isRu ? 'Сохранить расписание' : 'Save Schedule';
   String get calendar => _isRu ? 'Календарь' : 'Calendar';
   String get settings => _isRu ? 'Настройки' : 'Settings';
+  String get cloudAccount => _isRu ? 'Облако и аккаунт' : 'Cloud Account';
 
-  // --- Диалог добавления ---
   String get time => _isRu ? 'Время' : 'Time';
   String get eventName => _isRu ? 'Название события' : 'Event name';
   String get enterEventName =>
@@ -40,35 +32,33 @@ class AppStrings {
   String get repeatsWeekly =>
       _isRu ? 'Повторять каждую неделю' : 'Repeat weekly';
 
-  // --- Диалог удаления ---
   String get deleteEventTitle =>
       _isRu ? 'Удалить событие?' : 'Delete this event?';
   String get deleteEventMessage =>
       _isRu ? 'Это действие нельзя отменить.' : 'This action cannot be undone.';
 
-  // --- Загрузка файла ---
   String get uploadSchedule =>
       _isRu ? 'Загрузить расписание' : 'Upload Schedule';
   String get clickToSelect =>
-      _isRu ? 'Нажмите для выбора файла' : 'Click to select file or drag here';
+      _isRu ? 'Нажмите для выбора файла' : 'Click to select file';
   String get supported => _isRu ? 'Поддерживаются' : 'Supported';
   String get preview => _isRu ? 'Предпросмотр' : 'Preview';
   String get importBtn => _isRu ? 'Импортировать' : 'Import';
   String get importSuccess =>
       _isRu ? 'Расписание импортировано!' : 'Schedule imported!';
 
-  // --- Сохранение ---
   String get saveTitle =>
       _isRu ? 'Сохранить расписание?' : 'Save this schedule?';
-  String get saveMessage =>
-      _isRu ? 'Файл будет сохранён в загрузки.' : 'File will be saved to downloads folder.';
-  String get savedSuccess =>
-      _isRu ? 'Расписание успешно сохранено!' : 'Schedule was successfully saved to downloads folder!';
-  String get goToFile => _isRu ? 'Открыть файл' : 'Go to file';
+  String get saveMessage => _isRu
+      ? 'Файл будет сохранен в загрузки.'
+      : 'File will be saved to downloads folder.';
+  String get savedSuccess => _isRu
+      ? 'Расписание успешно сохранено!'
+      : 'Schedule was successfully saved!';
+  String get goToFile => _isRu ? 'Показать путь' : 'Show path';
 
-  // --- Настройки ---
   String get notifications => _isRu ? 'Уведомления' : 'Notifications';
-  String get darkMode => _isRu ? 'Тёмная тема' : 'Dark Mode';
+  String get darkMode => _isRu ? 'Темная тема' : 'Dark Mode';
   String get timeFormat => _isRu ? 'Формат времени' : 'Time Format';
   String get hour24 => _isRu ? '24-часовой' : '24-hour';
   String get hour12 => _isRu ? '12-часовой' : '12-hour';
@@ -77,27 +67,72 @@ class AppStrings {
   String get weekStart => _isRu ? 'Начало недели' : 'Week Start';
   String get monday => _isRu ? 'Понедельник' : 'Monday';
   String get sunday => _isRu ? 'Воскресенье' : 'Sunday';
-  String minutesBefore(int n) =>
-      _isRu ? 'За $n мин' : '$n min before';
+  String minutesBefore(int n) => _isRu ? 'За $n мин' : '$n min before';
 
-  // --- Редактирование ---
   String get edit => _isRu ? 'Изменить' : 'Edit';
   String get editEvent => _isRu ? 'Изменить событие' : 'Edit Event';
 
-  // --- Режим выделения ---
   String get selected => _isRu ? 'выбрано' : 'selected';
   String get selectAll => _isRu ? 'Выбрать все' : 'Select all';
   String deleteSelectedMessage(int count) =>
       _isRu ? 'Удалить $count событий?' : 'Delete $count events?';
 
-  // --- Дни недели ---
-  List<String> get weekDaysShort =>
-      _isRu ? ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
-             : ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+  String get serverUrl => _isRu ? 'URL сервера' : 'Server URL';
+  String get username => _isRu ? 'Логин' : 'Username';
+  String get password => _isRu ? 'Пароль' : 'Password';
+  String get login => _isRu ? 'Войти' : 'Login';
+  String get register => _isRu ? 'Регистрация' : 'Register';
+  String get logout => _isRu ? 'Выйти' : 'Logout';
+  String get cloudLoginHint => _isRu
+      ? 'Введите адрес backend и данные аккаунта.'
+      : 'Enter backend URL and account credentials.';
+  String cloudConnectedAs(String username) =>
+      _isRu ? 'Вы вошли как: $username' : 'Signed in as: $username';
+  String get cloudSyncUpload =>
+      _isRu ? 'Выгрузить расписание в облако' : 'Upload schedule to cloud';
+  String get cloudSyncDownload =>
+      _isRu ? 'Загрузить расписание из облака' : 'Download schedule from cloud';
+  String get loginSuccess =>
+      _isRu ? 'Вход выполнен успешно.' : 'Signed in successfully.';
+  String get registerSuccess =>
+      _isRu ? 'Аккаунт создан успешно.' : 'Account created successfully.';
+  String cloudUploadSuccess(int count) =>
+      _isRu ? 'В облако отправлено событий: $count' : 'Uploaded events: $count';
+  String cloudDownloadSuccess(int count) => _isRu
+      ? 'Из облака загружено событий: $count'
+      : 'Downloaded events: $count';
+
+  List<String> get weekDaysShort => _isRu
+      ? ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+      : ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
   List<String> get monthNames => _isRu
-      ? ['Январь','Февраль','Март','Апрель','Май','Июнь',
-         'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
-      : ['January','February','March','April','May','June',
-         'July','August','September','October','November','December'];
+      ? [
+          'Январь',
+          'Февраль',
+          'Март',
+          'Апрель',
+          'Май',
+          'Июнь',
+          'Июль',
+          'Август',
+          'Сентябрь',
+          'Октябрь',
+          'Ноябрь',
+          'Декабрь',
+        ]
+      : [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
 }
