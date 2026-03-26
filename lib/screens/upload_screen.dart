@@ -1,5 +1,7 @@
 // lib/screens/upload_screen.dart
-
+//
+// Экран загрузки файла с расписанием.
+// Пользователь выбирает файл → видит превью → нажимает Import.
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +71,12 @@ class _UploadScreenState extends State<UploadScreen> {
   Future<void> _import() async {
     if (_previewEvents == null || _previewEvents!.isEmpty) return;
 
-    await context.read<ScheduleProvider>().importEvents(_previewEvents!);
+    final scheduleProvider = context.read<ScheduleProvider>();
+    // Передаём выбранный день — события без даты импортируются именно на него
+    await scheduleProvider.importEvents(
+      _previewEvents!,
+      scheduleProvider.selectedDate,
+    );
 
     if (!mounted) return;
 

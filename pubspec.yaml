@@ -1,5 +1,5 @@
 name: schedule_app
-description: A schedule management app
+description: schedule 
 
 publish_to: 'none'
 version: 1.0.0+1

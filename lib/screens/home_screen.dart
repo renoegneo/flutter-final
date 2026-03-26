@@ -1,5 +1,4 @@
 // lib/screens/home_screen.dart
-// главный экран с расписанием на день
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +23,8 @@ class HomeScreen extends StatelessWidget {
 
     final events = scheduleProvider.eventsForSelectedDay;
     final selectedDate = scheduleProvider.selectedDate;
+    final isSelectionMode = scheduleProvider.isSelectionMode;
+    final selectedCount = scheduleProvider.selectedCount;
 
     final dateFormatter = DateFormat(
       settings.language == 'ru' ? 'EEEE, d MMMM' : 'EEEE, MMMM d',
@@ -32,26 +33,45 @@ class HomeScreen extends StatelessWidget {
     final dateTitle = dateFormatter.format(selectedDate);
 
     return Scaffold(
-      drawer: const BurgerMenu(),
+      drawer: isSelectionMode ? null : const BurgerMenu(),
 
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              dateTitle,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+      appBar: isSelectionMode
+          // --- AppBar в режиме выделения ---
+          ? AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: scheduleProvider.exitSelectionMode,
+              ),
+              title: Text('$selectedCount ${strings.selected}'),
+              actions: [
+                // Выделить всё / снять выделение
+                IconButton(
+                  icon: const Icon(Icons.select_all),
+                  tooltip: strings.selectAll,
+                  onPressed: scheduleProvider.toggleSelectAll,
+                ),
+                // Удалить выделенные
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  tooltip: strings.delete,
+                  onPressed: () => _confirmDeleteSelected(context, strings),
+                ),
+              ],
+            )
+          // --- Обычный AppBar ---
+          : AppBar(
+              title: Text(
+                dateTitle,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              actions: [
+                if (!_isToday(selectedDate))
+                  TextButton(
+                    onPressed: scheduleProvider.goToToday,
+                    child: Text(strings.today),
+                  ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          if (!_isToday(selectedDate))
-            TextButton(
-              onPressed: scheduleProvider.goToToday,
-              child: Text(strings.today),
-            ),
-        ],
-      ),
 
       body: scheduleProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -60,8 +80,7 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.event_note,
-                          size: 64, color: Colors.grey[400]),
+                      Icon(Icons.event_note, size: 64, color: Colors.grey[400]),
                       const SizedBox(height: 16),
                       Text(
                         strings.noEvents,
@@ -70,7 +89,6 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 )
-              // Список событий
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   itemCount: events.length,
@@ -78,16 +96,19 @@ class HomeScreen extends StatelessWidget {
                     final event = events[index];
                     return EventTile(
                       event: event,
-                      onDelete: () => _confirmDelete(context, event.id, event.title, strings),
+                      onDelete: () => _confirmDelete(
+                          context, event.id, event.title, strings),
                     );
                   },
                 ),
 
-      // кнопка добавления события
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddEvent(context, selectedDate),
-        child: const Icon(Icons.add),
-      ),
+      // FAB скрываем в режиме выделения — там он не нужен
+      floatingActionButton: isSelectionMode
+          ? null
+          : FloatingActionButton(
+              onPressed: () => _showAddEvent(context, selectedDate),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 
@@ -115,6 +136,35 @@ class HomeScreen extends StatelessWidget {
 
     if (confirmed == true && context.mounted) {
       await context.read<ScheduleProvider>().deleteEvent(eventId);
+    }
+  }
+
+  // Подтверждение удаления нескольких событий
+  Future<void> _confirmDeleteSelected(
+      BuildContext context, AppStrings strings) async {
+    final count = context.read<ScheduleProvider>().selectedCount;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(strings.deleteEventTitle),
+        content: Text(strings.deleteSelectedMessage(count)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(strings.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(strings.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await context.read<ScheduleProvider>().deleteSelected();
     }
   }
 
