@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../config/app_config.dart';
 import '../models/event.dart';
 import '../services/cloud_api_service.dart';
 import '../services/cloud_storage_service.dart';
@@ -8,7 +9,7 @@ class AuthProvider extends ChangeNotifier {
   final CloudApiService _api = CloudApiService();
   final CloudStorageService _storage = CloudStorageService();
 
-  String _baseUrl = 'http://127.0.0.1:8000';
+  final String _baseUrl = AppConfig.backendUrl;
   String? _token;
   String? _username;
   bool _isLoading = false;
@@ -22,14 +23,12 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> loadSession() async {
     final session = await _storage.loadSession();
-    _baseUrl = session.baseUrl;
     _token = session.token;
     _username = session.username;
     notifyListeners();
   }
 
   Future<bool> login({
-    required String baseUrl,
     required String username,
     required String password,
   }) async {
@@ -37,24 +36,20 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    final cleanUrl = _sanitizeBaseUrl(baseUrl);
-
     try {
       final token = await _api.login(
-        baseUrl: cleanUrl,
+        baseUrl: _baseUrl,
         username: username,
         password: password,
       );
       final serverUsername = await _api.fetchUsername(
-        baseUrl: cleanUrl,
+        baseUrl: _baseUrl,
         token: token,
       );
 
-      _baseUrl = cleanUrl;
       _token = token;
       _username = serverUsername;
       await _storage.saveSession(
-        baseUrl: cleanUrl,
         token: token,
         username: serverUsername,
       );
@@ -70,7 +65,6 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> register({
-    required String baseUrl,
     required String username,
     required String password,
   }) async {
@@ -78,24 +72,20 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    final cleanUrl = _sanitizeBaseUrl(baseUrl);
-
     try {
       final token = await _api.register(
-        baseUrl: cleanUrl,
+        baseUrl: _baseUrl,
         username: username,
         password: password,
       );
       final serverUsername = await _api.fetchUsername(
-        baseUrl: cleanUrl,
+        baseUrl: _baseUrl,
         token: token,
       );
 
-      _baseUrl = cleanUrl;
       _token = token;
       _username = serverUsername;
       await _storage.saveSession(
-        baseUrl: cleanUrl,
         token: token,
         username: serverUsername,
       );
@@ -140,19 +130,8 @@ class AuthProvider extends ChangeNotifier {
     return _api.fetchSchedule(baseUrl: _baseUrl, token: token);
   }
 
-  Future<void> rememberBaseUrl(String baseUrl) async {
-    final cleanUrl = _sanitizeBaseUrl(baseUrl);
-    _baseUrl = cleanUrl;
-    await _storage.saveBaseUrl(cleanUrl);
-    notifyListeners();
-  }
-
   void clearError() {
     _errorMessage = null;
     notifyListeners();
-  }
-
-  String _sanitizeBaseUrl(String baseUrl) {
-    return baseUrl.trim().replaceFirst(RegExp(r'/+$'), '');
   }
 }

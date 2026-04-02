@@ -14,7 +14,6 @@ class CloudScreen extends StatefulWidget {
 }
 
 class _CloudScreenState extends State<CloudScreen> {
-  late final TextEditingController _baseUrlController;
   late final TextEditingController _usernameController;
   late final TextEditingController _passwordController;
 
@@ -25,14 +24,12 @@ class _CloudScreenState extends State<CloudScreen> {
     super.initState();
     final auth = context.read<AuthProvider>();
 
-    _baseUrlController = TextEditingController(text: auth.baseUrl);
     _usernameController = TextEditingController(text: auth.username ?? '');
     _passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _baseUrlController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -71,16 +68,12 @@ class _CloudScreenState extends State<CloudScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(strings.cloudLoginHint),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _baseUrlController,
-          decoration: InputDecoration(
-            labelText: strings.serverUrl,
-            border: const OutlineInputBorder(),
-          ),
-          keyboardType: TextInputType.url,
+        const SizedBox(height: 8),
+        Text(
+          '${strings.serverUrl}: ${auth.baseUrl}',
+          style: TextStyle(color: Colors.grey[600]),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         TextField(
           controller: _usernameController,
           decoration: InputDecoration(
@@ -171,10 +164,7 @@ class _CloudScreenState extends State<CloudScreen> {
     final auth = context.read<AuthProvider>();
     final strings = AppStrings(context.read<SettingsProvider>().language);
 
-    await auth.rememberBaseUrl(_baseUrlController.text);
-
     final ok = await auth.login(
-      baseUrl: _baseUrlController.text,
       username: _usernameController.text.trim(),
       password: _passwordController.text,
     );
@@ -189,10 +179,7 @@ class _CloudScreenState extends State<CloudScreen> {
     final auth = context.read<AuthProvider>();
     final strings = AppStrings(context.read<SettingsProvider>().language);
 
-    await auth.rememberBaseUrl(_baseUrlController.text);
-
     final ok = await auth.register(
-      baseUrl: _baseUrlController.text,
       username: _usernameController.text.trim(),
       password: _passwordController.text,
     );
@@ -214,8 +201,8 @@ class _CloudScreenState extends State<CloudScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text(strings.cloudUploadSuccess(schedule.allEvents.length))),
+          content: Text(strings.cloudUploadSuccess(schedule.allEvents.length)),
+        ),
       );
     } catch (e) {
       if (!mounted) return;
