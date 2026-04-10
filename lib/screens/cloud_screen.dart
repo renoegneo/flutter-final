@@ -119,8 +119,6 @@ class _CloudScreenState extends State<CloudScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(strings.cloudConnectedAs(auth.username ?? '-')),
-                const SizedBox(height: 6),
-                Text('${strings.serverUrl}: ${auth.baseUrl}'),
               ],
             ),
           ),
