@@ -68,11 +68,6 @@ class _CloudScreenState extends State<CloudScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(strings.cloudLoginHint),
-        const SizedBox(height: 8),
-        Text(
-          '${strings.serverUrl}: ${auth.baseUrl}',
-          style: TextStyle(color: Colors.grey[600]),
-        ),
         const SizedBox(height: 16),
         TextField(
           controller: _usernameController,
